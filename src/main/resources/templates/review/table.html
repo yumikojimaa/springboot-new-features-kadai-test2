@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head>
+        <div th:replace="~{fragment :: meta}"></div>   
+             
+        <div th:replace="~{fragment :: styles}"></div>
+          
+        <title>民宿一覧</title>   
+    </head>
+    <body>
+		<div class="samuraitravel-wrapper">
+			<div th:replace="~{fragment :: header}"></div>
+			<main>
+				<div class="container samuraitravel-container pb-5">
+					<div class="row justify-content-center">
+						<nav class="my-3" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+							<ol class="breadcrumb mb-0">
+								<li  class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/houses/__${house.getId()}__}">民宿詳細</a></li>
+								<li class="breadcrumb-item active" aria-current="page">レビュー一覧</li>
+							</ol>
+						</nav>
+						
+						<thead>
+							<h1 class="mb-3 text-center"><span th:text="@{__${house.getName()}__}"></span>のレビュー一覧</h1>
+						</thead>
+						<tbody>
+							<div class="container p-3 ">
+							     <div class="row">
+									 <div class="col-6 pb-3" th:each="review : ${reviewPage}">
+									     <div class="card">	
+											<div class="card-body">									
+												<h3 class="card-title mb-3" th:text="${review.getUser().getName()}"></h3>			 
+												<p class="card-text mb-2">
+													<small class="text-muted"th:text="${review.getCreatedAt()}"></small>
+												</p>
+															 
+												 <p class="card-text">
+													<span th:if="${review.getStar()=='1'}">&#9733;&#9734;&#9734;&#9734;&#9734;</span>
+													<span th:if="${review.getStar()=='2'}">&#9733;&#9733;&#9734;&#9734;&#9734;</span>
+													<span th:if="${review.getStar()=='3'}">&#9733;&#9733;&#9733;&#9734;&#9734;</span>
+													<span th:if="${review.getStar()=='4'}">&#9733;&#9733;&#9733;&#9733;&#9734;</span>
+									    			<span th:if="${review.getStar()=='5'}">&#9733;&#9733;&#9733;&#9733;&#9733;</span>
+											     </p>
+												<p class="card-text">
+													<h8 class="card-text mb-3" th:text="${review.getReview()}"></h8>
+												</p>
+															 
+											</div>									
+										</div>
+									</div>
+								</div>
+							</div> 
+						</tbody>
+						<div th:if="${reviewPage.getTotalPages() > 1}" class="d-flex justify-content-center">
+                                <nav aria-label="レビュー一覧ページ">
+                                    <ul class="pagination">
+                                        <li class="page-item">
+                                            <span th:if="${reviewPage.isFirst()}" class="page-link disabled">前</span>
+                                            <a th:unless="${reviewPage.isFirst()}" th:href="@{/houses/__${house.getId()}__/review/table(page = ${reviewPage.getNumber() - 1})}" class="page-link samuraitravel-page-link">前</a>
+                                        </li>
+                                        <li th:each="i : ${#numbers.sequence(0, reviewPage.getTotalPages() - 1)}" class="page-item">
+                                            <span th:if="${i == reviewPage.getNumber()}" class="page-link active samuraitravel-active" th:text="${i + 1}"></span>
+                                            <a th:unless="${i == reviewPage.getNumber()}" th:href="@{/houses/__${house.getId()}__/review/table(page = ${i})}" class="page-link samuraitravel-page-link" th:text="${i + 1}"></a>
+                                        </li>
+                                        <li class="page-item">                        
+                                            <span th:if="${reviewPage.isLast()}" class="page-link disabled">次</span>
+                                            <a th:unless="${reviewPage.isLast()}" th:href="@{/houses/__${house.getId()}__/review/table(page = ${reviewPage.getNumber() + 1})}" class="page-link samuraitravel-page-link">次</a>
+                                        </li>
+                                    </ul>
+                                </nav> 
+                         </div>
+					</div>
+				</div>
+			</main>
+		</div>
+	</body>
+</html>

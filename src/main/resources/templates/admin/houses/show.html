@@ -117,7 +117,46 @@
                                      </div>
                                  </div>                                
                              </div>                                                  
-                 
+                             <div class="container mt-5">
+							    <h2 class="text-center mb-4">レビュー</h2>
+							    
+							    <div class="row">
+							        <!-- レビューがある場合 -->
+							        <div th:each="review : ${reviews}" class="col-12 mb-3">
+							            <div class="card">
+							                <div class="card-body">
+							                    <h5 class="card-title" th:text="${review.getReviewerName()}">ユーザー名</h5>
+							                    <p class="card-text" th:text="${review.getComment()}">レビューの内容</p>
+							                    <div>
+							                        評価: 
+							                        <span th:text="${review.getRating()}">5</span> / 5
+							                    </div>
+							                </div>
+							            </div>
+							        </div>
+							        
+							        <!-- レビューがない場合のメッセージ -->
+							        <div th:if="${#lists.isEmpty(reviews)}" class="col-12">
+							            <p class="text-center">レビューがまだありません。</p>
+							        </div>
+							    </div>
+							
+							    <!-- 新しいレビューを投稿するフォーム -->
+							    <div sec:authorize="isAuthenticated()" class="mt-4">
+							        <h3 class="mb-3">レビューを投稿する</h3>
+							        <form method="post" th:action="@{/houses/__${house.getId()}__/reviews}" th:object="${reviewForm}">
+							            <div class="mb-3">
+							                <label for="comment" class="form-label">コメント</label>
+							                <textarea class="form-control" th:field="*{comment}" rows="3"></textarea>
+							            </div>
+							            <div class="mb-3">
+							                <label for="rating" class="form-label">評価 (1〜5)</label>
+							                <input type="number" class="form-control" th:field="*{rating}" min="1" max="5">
+							            </div>
+							            <button type="submit" class="btn btn-primary">投稿する</button>
+							        </form>
+							    </div>
+							</div>
                          </div>
                      </div>
                  </div>             

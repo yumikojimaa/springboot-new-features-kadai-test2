@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+	<head>
+        <div th:replace="~{fragment :: meta}"></div>   
+             
+        <div th:replace="~{fragment :: styles}"></div>
+          
+        <title>レビュー一覧</title>   
+    </head>
+    <body>
+		<div class ="samuraitravel-wrapper">
+			<div th:replace="~{fragment :: header}"></div>
+			<main>
+				<div class ="container samuraitravel-container pb-5">
+                    <div class ="row justify-content-center">
+						<div class ="col-xl-5 col-lg-6 col-md-8">
+							<nav class="mb-4" style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+                                <ol class="breadcrumb mb-0">                        
+                                    <li class="breadcrumb-item"><a th:href="@{/}">ホーム</a></li>
+                                    <li class="breadcrumb-item"><a th:href="@{/houses}">民宿一覧</a></li>
+                                    <li class="breadcrumb-item active"><a th:href="@{/houses/__${house.getId()}__}">民宿詳細</a></li>
+                                    <li class="breadcrumb-item active" aria-current="page">レビュー投稿</li>
+                                </ol>
+                            </nav> 
+                            <h1 class="mb-4 text-center">
+                               <span th:text="@{__${house.getName()}__}"></span>のレビュー投稿
+                            </h1>
+
+                            <form method="post" th:action="@{/houses/__${house.getId()}__/review/create}" th:object="${RegisterForm}" enctype="multipart/form-data">
+								<div class="form-group row mb-3">
+									<div class ="col-md-4">
+										<label for="star" class="col-form-label text-md-left fw-bold">評価</label>
+									</div>
+									<div class="col-md-8">
+										<div th:if="${#fields.hasErrors('star')}" class="text-danger small mb-2" th:errors="*{star}"></div>
+										<select class="form-controll" th:field="*{star}">
+											<option value=1>&#9733;&#9734;&#9734;&#9734;&#9734;</option>
+											<option value=2>&#9733;&#9733;&#9734;&#9734;&#9734;</option>
+											<option value=3>&#9733;&#9733;&#9733;&#9734;&#9734;</option>
+											<option value=4>&#9733;&#9733;&#9733;&#9733;&#9734;</option>
+											<option value=5>&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+										</select>
+									</div>
+									<div class ="col-md-4">
+										<label for="review" class ="col-form-label text-md-left fw-bold">コメント</label>
+									</div>
+									<div class ="col-md-8">
+										<div th:if="${#fields.hasErrors('review')}" class="text-danger small mb-2" th:errors="*{review}"></div>
+										<textarea class="form-control" th:field="*{review}" cols="30" rows="5"></textarea>
+									</div>
+									<div class ="form-group d-flex justify-content-center my-4">
+										<button type="submit" class="btn text-white shadow-sm w-50 samuraitravel-btn">登録</button>
+									</div>
+								</div>
+							</form>
+						</div>
+					</div> 
+				</div>
+			</main>
+			<div th:replace="~{fragment :: footer}"></div>
+		</div>
+		<div th:replace="~{fragment :: scripts}"></div>
+		<script th:src="@{/js/preview.js}"></script>
+	</body>
+</html>

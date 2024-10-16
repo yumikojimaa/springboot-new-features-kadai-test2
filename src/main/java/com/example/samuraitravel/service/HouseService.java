@@ -23,6 +23,11 @@ import com.example.samuraitravel.repository.HouseRepository;
          this.houseRepository = houseRepository;        
      }    
      
+     public House findById(Integer houseId) {
+         return houseRepository.findById(houseId)
+                 .orElseThrow(() -> new RuntimeException("民宿が見つかりません: " + houseId));
+     }
+    
      @Transactional
      public void create(HouseRegisterForm houseRegisterForm) {
          House house = new House();        
@@ -88,5 +93,7 @@ import com.example.samuraitravel.repository.HouseRepository;
          } catch (IOException e) {
              e.printStackTrace();
          }          
-     } 
+     }
+     
+     
  }
