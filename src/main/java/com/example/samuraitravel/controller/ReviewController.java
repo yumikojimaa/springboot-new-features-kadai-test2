@@ -33,11 +33,15 @@ public class ReviewController {
 	private final ReviewService reviewService;
 	private final HouseRepository houseRepository;
 	
+
 	 public ReviewController(ReviewRepository reviewRepository,HouseRepository houseRepository,ReviewService reviewService) {
 		    this.reviewRepository = reviewRepository;
 		    this.reviewService = reviewService;
 		    this.houseRepository = houseRepository;
 		  }
+	 
+	
+	 
 	 //家の詳細ページ
 	 @GetMapping
 	  public String index(Model model,@PageableDefault(page = 0, size = 6, sort = "id", direction = Direction.ASC)Pageable pageable) {
@@ -46,16 +50,28 @@ public class ReviewController {
 		   model.addAttribute("reviewPage", reviewPage);
 		   return "houses/show";
 	  }
-	 //レビュー一覧の表示
-	 @GetMapping("/table")
-	  public String table(@PathVariable(name = "houseId") Integer houseId,Model model,@PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC)Pageable pageable) {
-		  Page<Review> reviewPage;   
-		  reviewPage = reviewRepository.findAll(pageable);
-		  House house = houseRepository.getReferenceById(houseId);
-		  model.addAttribute("house", house);
-	      model.addAttribute("reviewPage", reviewPage);
-	      return "review/table"; 
-	  }
+	// レビュー一覧の表示
+	    @GetMapping("/table")
+	    public String table(@PathVariable(name = "houseId") Integer houseId,
+	                        Model model,
+	                        @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+	                        @PageableDefault(page = 0, size = 10, sort = "id", direction = Direction.ASC) Pageable pageable) {
+	    	// houseIdに基づいてレビューを取得
+	        House house = houseRepository.findById(houseId)
+	            .orElseThrow(() -> new IllegalArgumentException("Invalid house Id:" + houseId));
+	        
+	        Page<Review> reviewPage = reviewRepository.findByHouseOrderByCreatedAtDesc(house, pageable);
+	        
+	        
+	        model.addAttribute("house", house);
+	        model.addAttribute("reviewPage", reviewPage);
+
+	        if (userDetailsImpl != null) {
+	            model.addAttribute("user", userDetailsImpl.getUser());
+	        }
+
+	        return "review/table";
+	    }
 	  
 	 //レビューの投稿
 	  @GetMapping("/register")

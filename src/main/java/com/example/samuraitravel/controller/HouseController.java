@@ -85,27 +85,35 @@ public class HouseController {
 
 
 	@GetMapping("/{id}")
-	public String show(@PathVariable(name = "id") Integer id,FavoriteRegisterForm favoriteRegisterForm, FavoriteRepository favoriteRepository, Model model, @PageableDefault(page = 0, size = 6, sort = "id", direction = Direction.ASC) Pageable pageable, @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-		/*	    if (userDetailsImpl == null) {
-		    // ユーザーが未認証の場合の処理、例えばログインページへリダイレクト
-		    return "redirect:/login";
-		}*/
-	    //if文で条件分岐
+	public String show(@PathVariable(name = "id") Integer id,
+	                   FavoriteRegisterForm favoriteRegisterForm,
+	                   FavoriteRepository favoriteRepository,
+	                   Model model,
+	                   @PageableDefault(page = 0, size = 6, sort = "id", direction = Direction.ASC) Pageable pageable,
+	                   @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
 	    
-		/* User user = userDetailsImpl.getUser();*/
+	    // Houseを取得
 	    House house = houseRepository.getReferenceById(id);
-	    Page<Review> reviewPage = reviewRepository.findAll(pageable);
-	    Review review = reviewRepository.getReferenceById(id);
+	    
+	    // houseに基づいてレビューを取得
+	    Page<Review> reviewPage = reviewRepository.findByHouseOrderByCreatedAtDesc(house, pageable);
+
+	    // レビューが見つからなかった場合の処理
+	    if (reviewPage.isEmpty()) {
+	        System.out.println("No reviews found for house id: " + id);
+	    }
+
 	    ReservationInputForm reservationInputForm = new ReservationInputForm();
 
-	    model.addAttribute("reviewPage", reviewPage);
+	    // モデルにデータを追加
+	    model.addAttribute("reviewPage", reviewPage); // 変更
 	    model.addAttribute("house", house);
 	    model.addAttribute("reservationInputForm", reservationInputForm);
-	    model.addAttribute("review", review);
-		/* model.addAttribute("user", user);*/
+
+	    // ユーザー情報の追加
+	    if (userDetailsImpl != null) {
+	        model.addAttribute("user", userDetailsImpl.getUser());
+	    }
 
 	    return "houses/show";
-	}
-
-
-}
+	}}
