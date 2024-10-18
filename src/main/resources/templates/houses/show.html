@@ -170,10 +170,12 @@
 							<div class="text-center">
 								<h1>レビュー</h1>
 							</div>
+
 							<div class="text-center" sec:authorize="isAuthenticated()" th:if="${hasNotMyReview}">
 								<a class="btn text-white shadow-sm w-50 samuraitravel-btn"
 									th:href="@{/houses/__${house.getId()}__/review/register}">レビューを投稿する</a>
 							</div>
+
 
 
 							<div class="container p-3">
