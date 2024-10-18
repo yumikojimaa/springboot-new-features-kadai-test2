@@ -1,5 +1,7 @@
 package com.example.samuraitravel.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort.Direction;
@@ -75,10 +77,33 @@ public class ReviewController {
 	  
 	 //レビューの投稿
 	  @GetMapping("/register")
-	  public String register(@PathVariable(name = "houseId") Integer houseId, Model model) {
+	  public String register(@PathVariable(name = "houseId") Integer houseId, Model model, Review userDetailsImpl, List<Review> reviewPage) {
 	      House house = houseRepository.getReferenceById(houseId);
 	      model.addAttribute("house", house);
 	      model.addAttribute("RegisterForm", new RegisterForm());
+	      
+	   // ユーザー情報の追加
+	      if (userDetailsImpl != null) {
+	          model.addAttribute("user", userDetailsImpl.getUser());
+
+	          // ログインユーザが登録したレビューが存在しないことをチェック
+	          boolean hasNotMyReview = true;
+
+	          for (Review review : reviewPage) { // reviewPageをループ
+	              if (review.getUser() != null && // reviewのUserがnullでないことを確認
+	                  review.getUser().getId().equals(userDetailsImpl.getUser().getId())) {
+	                  hasNotMyReview = false; // 一致したらfalseに変更
+	                  break; // 一つでも見つけたらループを抜ける
+	              }
+	          }
+
+	          // 上記のチェック結果をビューに渡す
+	          model.addAttribute("hasNotMyReview", hasNotMyReview);
+	      } else {
+	          // ログインしていないときは、念のためtrueを設定
+	          model.addAttribute("hasNotMyReview", true);
+	      }
+
 	      return "review/register";
 	  }
 
